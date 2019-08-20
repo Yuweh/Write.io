@@ -5,20 +5,33 @@
     
     func loadLastInput() {
         
-        //set dateToday and have key for retrieving
+        // get date today
         let date = Date()
         let formatter = DateFormatter()
         formatter.dateFormat = "MM/dd/yyyy"
+        
+        // generate key for retrieving
         let glucoseDateStampKey = ("\(formatter.string(from: date))-InputGlucoseDateStampKey")
-
-        //self.lastGlucoseInputLabel.text = glucoseDateStampKey
+        let glucoseTimeStampArrayKey = ("\(formatter.string(from: date))-InputGlucoseDateStampArrayKey")
+        
+        // set DataSharing for data retrieval from Main App
+        if let sharedDefaults: UserDefaults = UserDefaults(suiteName:"group.jp.co.arkray.e-SMBG") {
+            let timeStampsArray = sharedDefaults.object(forKey: glucoseTimeStampArrayKey) as! [String]
+            let tempArray = sharedDefaults.object(forKey: glucoseDateStampKey)
+            
+            // for checking
+            print("ForTodayExtension- timeStampsArray@Ext: \(String(describing: timeStampsArray))")
+            print("ForTodayExtension- timeStampsArray@Ext: \(String(describing: timeStampsArray))")
+            
+        }
+        
     }
 
 // for VC
 
 -(void)saveInputGlucoseForTodayExtension
 {
-    //set dateToday
+    //g et dateToday
     NSDate *dateToday = [[NSDate alloc]init];
     
     // get current date today as String
@@ -39,13 +52,13 @@
     NSString* glucoseTimeStampArrayKey = [localDateString stringByAppendingString:@"-InputGlucoseDateStampArrayKey"];
     
     // for checking
-    NSLog(@"localDateString        :%@", localDateString);
-    NSLog(@"localTimeString       :%@", localTimeString);
-    NSLog(@"utcDate       :%@", dateToday);
-    NSLog(@"glucoseTimeStampKey       :%@", glucoseTimeStampKey);
+    NSLog(@"ForTodayExtension- localDateString: %@", localDateString);
+    NSLog(@"ForTodayExtension- localTimeString: %@", localTimeString);
+    NSLog(@"ForTodayExtension- utcDate: %@", dateToday);
+    NSLog(@"ForTodayExtension- glucoseTimeStampKey: %@", glucoseTimeStampKey);
     
-    //save inputglucose
-    NSUserDefaults *shared = [[NSUserDefaults alloc] initWithSuiteName:@"group.jp.co.arkray.e-SMBG"];
+    // set DataSharing for App Extension
+    NSUserDefaults *sharedDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.jp.co.arkray.e-SMBG"];
     //[shared setObject:glucoseTimeStampKey forKey:glucoseDateStampKey];
     
     // initialize empty arrays and dictionary
@@ -61,7 +74,8 @@
     [tempArray addObject:tempDic];
     
     // save values for Data Sharing with extension
-    [shared setObject:tempArray forKey:glucoseDateStampKey];
-    [shared setObject:timeStampsArray forKey:glucoseTimeStampArrayKey];
-    [shared synchronize];
+    [sharedDefaults setObject:tempArray forKey:glucoseDateStampKey];
+    [sharedDefaults setObject:timeStampsArray forKey:glucoseTimeStampArrayKey];
+    [sharedDefaults synchronize];
+    
 }
